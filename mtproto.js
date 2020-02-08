@@ -3797,7 +3797,7 @@ function MtpDcConfiguratorModule() {
     var chosenServers = {};
 
     function chooseServer(dcID, upload) {
-        var dcOptions = Config.Modes.test ? Config.Server.Test : Config.Server.Production;
+        var dcOptions = Config.Modes.test ? Config.Server.Test : chooseProtocol() === 'https:' ? Config.Server.Https : Config.Server.Production;
 
         if (chosenServers[dcID] === undefined) {
             var chosenServer = false,
@@ -3806,7 +3806,7 @@ function MtpDcConfiguratorModule() {
             for (i = 0; i < dcOptions.length; i++) {
                 dcOption = dcOptions[i];
                 if (dcOption.id == dcID) {
-                    chosenServer = chooseProtocol() + '//' + (chooseProtocol() === 'https' ? dcOption.host : 'venus.web.telegram.org') + (dcOption.port != 80 ? ':' + dcOption.port : '') + '/apiw1';
+                    chosenServer = chooseProtocol() + '//' + dcOption.host + (dcOption.port != 80 ? ':' + dcOption.port : '') + '/apiw1';
                     break;
                 }
             }
@@ -5230,6 +5230,7 @@ function TelegramApiModule(MtpApiManager, AppPeersManager, MtpApiFileManager, Ap
 
         Config.Server.Test = config.server.test;
         Config.Server.Production = config.server.production;
+        Config.Server.Https = config.server.https;
 
         MtpApiManager.getNetworker(options.dcID, {createNetworker: true});
     }
